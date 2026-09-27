@@ -32,7 +32,7 @@
 | Purpose & Sustainability | 20 | Prevents household over-cooking at the moment it happens; leftovers get claimed instead of binned |
 | Creativity & Innovation | 20 | The headcount isn't new; *grams that learn from your leftovers, per family, per dish* is |
 | Presentation & Documentation | 15 | Cinematic landing page, README, this file, `docs/APP-DESIGN.md` (Mobbin references), CREDITS.md |
-| Project Focus | 15 | Five steps only: no accounts, streaks, points, recipes, grocery list or chat |
+| Project Focus | 15 | The core loop only (ask → amount → leftovers → claim): no accounts, streaks, points, recipes, grocery list or chat |
 
 ## Video (≤ 3:00): a shot list, not a script
 1. 0:00 The problem: a full pot, three people at the table.
