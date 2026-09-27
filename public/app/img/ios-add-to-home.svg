@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 520" font-family="-apple-system, 'SF Pro Text', 'Instrument Sans', system-ui, sans-serif">
+  <title>Safari share sheet with Add to Home Screen highlighted</title>
+  <rect width="600" height="520" rx="28" fill="#E9E5DE"/>
+  <!-- sheet -->
+  <rect x="24" y="24" width="552" height="472" rx="22" fill="#F7F5F1"/>
+  <rect x="270" y="36" width="60" height="6" rx="3" fill="#C9C3B8"/>
+  <!-- page preview row -->
+  <rect x="48" y="62" width="56" height="56" rx="13" fill="#B83D1A"/>
+  <circle cx="76" cy="92" r="17" fill="#F4EFE6"/>
+  <text x="120" y="86" font-size="21" font-weight="600" fill="#1E1A16">Dinner Count</text>
+  <text x="120" y="112" font-size="17" fill="#6B6259">dinner-count.onrender.com</text>
+  <!-- rows -->
+  <g font-size="21" fill="#1E1A16">
+    <rect x="48" y="140" width="504" height="64" rx="14" fill="#FFFFFF"/>
+    <text x="72" y="180">Copy</text>
+    <rect x="48" y="216" width="504" height="64" rx="14" fill="#FFFFFF"/>
+    <text x="72" y="256">Add to Reading List</text>
+    <!-- highlighted row -->
+    <rect x="44" y="290" width="512" height="72" rx="16" fill="#FFFFFF" stroke="#B83D1A" stroke-width="4"/>
+    <text x="72" y="334" font-weight="600">Add to Home Screen</text>
+    <rect x="496" y="306" width="36" height="36" rx="9" fill="none" stroke="#1E1A16" stroke-width="3"/>
+    <path d="M514 316v16M506 324h16" stroke="#1E1A16" stroke-width="3" stroke-linecap="round"/>
+    <rect x="48" y="374" width="504" height="64" rx="14" fill="#FFFFFF"/>
+    <text x="72" y="414" fill="#6B6259">Markup</text>
+  </g>
+  <!-- pointer -->
+  <g transform="translate(400 380)">
+    <path d="M0 0 l26 -40 l10 22 l24 -4 z" fill="#B83D1A"/>
+  </g>
+  <text x="48" y="476" font-size="17" fill="#6B6259">Share → scroll → Add to Home Screen → Add</text>
+</svg>

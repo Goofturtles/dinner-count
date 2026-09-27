@@ -1,0 +1,23 @@
+/* Dinner Count design system — see DESIGN.md. Geist + Geist Mono; warm paper, ink, one tomato accent. */
+:root {
+  --paper: #F4EFE6;      /* app background */
+  --card: #FFFDF8;       /* surfaces */
+  --ink: #1E1A16;        /* text */
+  --muted: #6B6259;      /* secondary text, 5.3:1 on paper */
+  --line: #E3DACB;       /* hairlines */
+  --tomato: #B83D1A;     /* the one accent: amounts + primary action (white on it 5.6:1) */
+  --tomato-soft: #F6DCD0;
+  --brass: #8A6A2B;      /* "save me a plate" (4.9:1 on card) */
+  --night: #14110E;      /* landing background */
+  --night-2: #2A211A;
+  --cream: #F4EFE6;
+
+  --display: 'Geist', -apple-system, 'SF Pro Display', system-ui, 'Segoe UI', sans-serif;
+  --text: 'Geist', -apple-system, 'SF Pro Text', system-ui, 'Segoe UI', sans-serif;
+  --mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  --r-sm: 10px; --r: 14px; --r-lg: 22px;
+  --tap: 56px;           /* thumb-sized; never below 44px */
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}

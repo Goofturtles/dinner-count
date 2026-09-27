@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Dinner Count: cook for who's actually home</title>
+  <meta name="description" content="Everyone taps Home, Save me a plate, or Out. The cook gets exactly how much to make, and it learns from your leftovers.">
+  <meta name="theme-color" content="#14110E">
+  <link rel="icon" href="/app/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/app/icons/apple-touch-icon.png">
+  <script>
+    // Visibility states (before first paint): html.js = cinematic unless a fallback applies.
+    (function (d) {
+      var h = d.documentElement, q = location.search;
+      h.classList.remove('no-js'); h.classList.add('js');
+      var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (/[?&]static=1/.test(q) || (rm && !/[?&]motion=1/.test(q))) h.classList.add('static');
+      if (rm) h.classList.add('reduced');
+      // Never leave a visitor on a blank loader: fall back to the still page after 20 s.
+      setTimeout(function () { if (!h.classList.contains('webgl')) h.classList.add('static'); }, 20000);
+    })(document);
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="/shared/tokens.css">
+  <link rel="stylesheet" href="/landing/landing.css">
+  <link rel="modulepreload" href="/vendor/three/three.module.min.js">
+  <script type="importmap">
+    { "imports": {
+      "three": "/vendor/three/three.module.min.js",
+      "three/addons/": "/vendor/three-addons/"
+    } }
+  </script>
+</head>
+<body>
+  <!-- Layer 0: CSS twin of the first WebGL frame, so first paint is never blank. -->
+  <div id="bg" aria-hidden="true"></div>
+  <div id="still" aria-hidden="true">
+    <picture>
+      <source media="(max-aspect-ratio: 4/5)" srcset="/assets/hero-mobile.webp" width="780" height="1688">
+      <img src="/assets/hero.webp" width="1600" height="1000" alt="" loading="lazy" decoding="async" onerror="this.closest('#still').classList.add('missing')">
+    </picture>
+  </div>
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <!-- HUD. Skip link is first in tab order and always visible. -->
+  <header class="hud-top">
+    <a class="skip glass has-glass" href="/app/">Skip to the app <span aria-hidden="true">&rarr;</span></a>
+    <div class="ruler" aria-hidden="true">
+      <div class="ruler-track"></div>
+      <span class="ruler-needle"></span>
+    </div>
+    <div class="tally glass has-glass" aria-hidden="true">
+      <span class="tally-k">Tonight</span>
+      <span class="tally-v" data-tally>5 plates</span>
+    </div>
+  </header>
+
+  <main id="story">
+    <div class="scrim scrim-light" aria-hidden="true"></div>
+    <div class="scrim scrim-dark" aria-hidden="true"></div>
+    <!-- Act 0: the loader gate. The clock counts to 4:00 while the scene loads. -->
+    <section class="act act-gate on-light" data-act="0" aria-labelledby="q-home">
+      <p class="clock" aria-hidden="true"><span data-clock>3:52</span><small>PM</small></p>
+      <p class="brand">Dinner Count</p>
+      <div class="notif glass has-glass">
+        <p class="notif-app"><span class="notif-dot" aria-hidden="true"></span>Dinner Count <span class="notif-time">now</span></p>
+        <h1 id="q-home" class="notif-q">Home for dinner?</h1>
+        <div class="answers" role="group" aria-label="Answer">
+          <button type="button" class="answer glass has-glass is-primary" data-answer="home">Home</button>
+          <button type="button" class="answer glass has-glass" data-answer="plate">Save me a plate</button>
+          <button type="button" class="answer glass has-glass" data-answer="out">Out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Act 1: 4:00 PM, the plates. -->
+    <section class="act act-1 on-light" data-act="1" aria-labelledby="h-1">
+      <div class="copy">
+        <p class="eyebrow">4:00 PM</p>
+        <h2 id="h-1" class="headline"><span class="lt">One question.</span> <span class="lt lt-big">One tap each.</span></h2>
+        <p class="body">Everyone gets the same buzz at four. Home, save me a plate, or out. No answer counts as home.</p>
+        <ul class="family" aria-label="Tonight's answers">
+          <li data-at="0.05"><span class="who">Maya</span> <span class="ans">Home</span></li>
+          <li data-at="0.075"><span class="who">Dev</span> <span class="ans">Home</span></li>
+          <li data-at="0.10" class="is-out"><span class="who">Theo</span> <span class="ans">Out</span></li>
+          <li data-at="0.125" class="is-plate"><span class="who">Ivy</span> <span class="ans">Save me a plate</span></li>
+          <li data-at="0.15"><span class="who">Nora</span> <span class="ans">Home</span></li>
+        </ul>
+      </div>
+      <div class="card glass has-glass" data-anchor="plates">
+        <p class="card-k">The count</p>
+        <p class="card-v swap"><span class="from">5 plates</span><span class="sr-only"> becomes </span><span class="to">3 eating + 1 plate</span></p>
+      </div>
+    </section>
+
+    <!-- Act 2: 5:30 PM, the pot. The count becomes grams. Mid-story hold gate. -->
+    <section class="act act-2" data-act="2" aria-labelledby="h-2">
+      <div class="copy">
+        <p class="eyebrow">5:30 PM</p>
+        <h2 id="h-2" class="headline"><span class="lt">The count</span> <span class="lt lt-big">becomes grams.</span></h2>
+        <p class="body">The box says 100 g a person. Your family eats a little less than that, so the number says so.</p>
+      </div>
+      <div class="bignum" aria-label="500 grams, then 400, then 320">
+        <p class="bignum-v" aria-hidden="true"><span data-grams>500</span><small>g</small></p>
+        <p class="bignum-k" aria-hidden="true">
+          <span data-step="0">Box amount for 5</span>
+          <span data-step="1">4 eating</span>
+          <span data-step="2">How your family eats</span>
+        </p>
+      </div>
+      <div class="card glass has-glass card-accent" data-anchor="pasta">
+        <p class="card-k">5:30 PM</p>
+        <p class="card-v">Cook 320 g pasta</p>
+        <p class="card-s">Based on your last 4 pasta nights.</p>
+      </div>
+      <div class="gate gate-mid" data-anchor="pot">
+        <button type="button" class="hold" data-hold="cook" aria-label="Hold to cook" aria-describedby="hold-cook-hint">
+          <span class="hold-ring" aria-hidden="true">
+            <svg viewBox="0 0 100 100"><circle class="hold-track" cx="50" cy="50" r="44"/><circle class="hold-fill" cx="50" cy="50" r="44"/></svg>
+          </span>
+          <span class="hold-core" aria-hidden="true"></span>
+          <span class="hold-label" aria-hidden="true">Hold<br>to cook</span>
+        </button>
+        <p id="hold-cook-hint" class="sr-only">Press and hold, or hold Enter or Space.</p>
+      </div>
+    </section>
+
+    <!-- Act 3: after dinner. Leftovers teach it. -->
+    <section class="act act-3" data-act="3" aria-labelledby="h-3">
+      <div class="copy">
+        <p class="eyebrow">After dinner</p>
+        <h2 id="h-3" class="headline"><span class="lt">It learns</span> <span class="lt lt-big">from leftovers.</span></h2>
+        <p class="body">One tap after dinner: how much came back? Rice keeps coming back, so next time it cooks less rice. Only for your family.</p>
+        <ul class="leftovers" aria-label="Leftover answers">
+          <li>Ran out</li><li>None left</li><li>A bowl</li><li class="is-on">A lot</li>
+        </ul>
+      </div>
+      <ol class="ledger" aria-label="Rice amounts over time">
+        <li data-at="0.585"><span class="ledger-v">300 g</span> <span class="ledger-k">First rice night</span></li>
+        <li data-at="0.635"><span class="ledger-v">270 g</span> <span class="ledger-k">After two nights of &ldquo;a lot&rdquo;</span></li>
+        <li data-at="0.685"><span class="ledger-v">250 g</span> <span class="ledger-k">Where it settles</span></li>
+      </ol>
+      <div class="card glass has-glass" data-anchor="rice">
+        <p class="card-k">Rice</p>
+        <p class="card-v">A lot left, twice <span aria-hidden="true">&rarr;</span><span class="sr-only">, so</span> 270 g</p>
+      </div>
+    </section>
+
+    <!-- Act 4: steam reveal. A week in, and leftovers get claimed. -->
+    <section class="act act-4 on-light" data-act="4" aria-labelledby="h-4">
+      <div class="copy copy-center">
+        <p class="eyebrow">A week in</p>
+        <h2 id="h-4" class="headline"><span class="lt">Every night,</span> <span class="lt lt-big">a little closer.</span></h2>
+        <p class="body">The amounts end up matching how your family actually eats, not what the box says.</p>
+      </div>
+      <div class="card glass has-glass card-claim">
+        <p class="card-k">4:00 PM, next day</p>
+        <p class="card-q">Chili from last night is in the fridge. Who's taking it for lunch?</p>
+        <button type="button" class="claim glass has-glass" aria-pressed="false">Me</button>
+      </div>
+    </section>
+
+    <!-- Act 5: the final world and the press-and-hold gate. -->
+    <section class="act act-5" data-act="5" aria-labelledby="h-5">
+      <div class="copy">
+        <p class="eyebrow">7:00 PM</p>
+        <h2 id="h-5" class="headline"><span class="lt">Cook for who's</span> <span class="lt lt-big">actually home.</span></h2>
+        <p class="body">Free. First names only. No email, no phone, no location.</p>
+      </div>
+      <div class="gate gate-final">
+        <button type="button" class="hold hold-final" data-hold="start" aria-label="Start a family" aria-describedby="hold-start-hint">
+          <span class="hold-ring" aria-hidden="true">
+            <svg viewBox="0 0 100 100"><circle class="hold-track" cx="50" cy="50" r="44"/><circle class="hold-fill" cx="50" cy="50" r="44"/></svg>
+          </span>
+          <span class="hold-core" aria-hidden="true"></span>
+          <span class="hold-label" aria-hidden="true">Hold to start<br>a family</span>
+        </button>
+        <p id="hold-start-hint" class="sr-only">Press and hold, or hold Enter or Space. Opens the app.</p>
+        <a class="demo-link" href="/app/#demo">Try the sandbox family</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom HUD: status label and the glass pill CTA (a real link, always there). -->
+  <p class="hud-status" aria-live="polite"><span class="hud-status-label" data-status>Loading</span></p>
+  <nav class="pill glass has-glass" aria-label="Get started">
+    <span class="pill-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="currentColor"/></svg></span>
+    <a class="pill-cta" href="/app/#/create">Start a family</a>
+    <a class="pill-alt" href="/app/#demo">Sandbox</a>
+  </nav>
+
+  <script type="module" src="/landing/main.js"></script>
+</body>
+</html>
